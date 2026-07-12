@@ -31,3 +31,13 @@ public/pagefind
 
 # docker compose
 compose.override.yaml
+
+# example posts
+src/posts/examples/
+src/posts/tutorials
+
+
+notes.org
+
+
+*~
