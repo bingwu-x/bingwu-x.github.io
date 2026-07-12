@@ -3,7 +3,7 @@ import { defineAstroPaperConfig } from "./src/types/config";
 export default defineAstroPaperConfig({
   site: {
     url: "https://bingwu-x.github.io",
-    title: "The Year Bingwu",
+    title: "The Year of Bingwu",
     description: "thoughts recorded from the year Bingwu",
     author: "bingwu-x",
     profile: "https://notreadyyet.xxx",
