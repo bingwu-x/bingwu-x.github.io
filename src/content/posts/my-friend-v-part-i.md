@@ -1,6 +1,6 @@
 ---
 title: My Friend V, Part I
-author: Sat Naing
+author: bingwu
 pubDatetime: 2026-07-13T12:08:23.169+00:00
 slug: my-friend-v-part-i
 featured: true
