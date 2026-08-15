@@ -15,6 +15,9 @@ import BackButton from "./_components/BackButton.astro";
 import BackToTopButton from "./_components/BackToTopButton.astro";
 import AdjacentPostNav from "./_components/AdjacentPostNav.astro";
 import config from "@/config";
+import PasswordProtect from '../../../components/PasswordProtect.astro';
+import { encrypt } from '../../../lib/crypto';
+
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
@@ -72,6 +75,21 @@ const {
 } = post.data;
 
 const { Content } = await render(post);
+
+
+// protection
+// const isProtected = !!post.data.password;
+let isProtected = false;
+let encryptedPayload = null;
+
+if (post.data.payload) {
+  encryptedPayload = post.data.payload;
+  isProtected = true;
+} else if (isProtected && post.body && post.data.password) {
+  encryptedPayload = encrypt(post.body, post.data.password);
+  isProtected = true;
+}
+
 
 let ogImageUrl: string | undefined;
 
@@ -140,7 +158,14 @@ const ogImage = ogImageUrl
         "prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)",
       ]}
     >
-      <Content />
+
+      {isProtected && encryptedPayload ? (
+        <PasswordProtect payload={encryptedPayload} />
+      ) : (
+        <Content />
+      )}
+
+
     </article>
 
     <hr class="my-8 border-dashed" />

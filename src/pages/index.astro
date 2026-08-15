@@ -9,7 +9,9 @@ import Footer from "@/components/Footer.astro";
 import Socials from "@/components/Socials.astro";
 import Card from "@/components/Card.astro";
 import LinkButton from "@/components/LinkButton.astro";
-import { getSortedPosts } from "@/utils/getSortedPosts";
+// import { getSortedPosts } from "@/utils/getSortedPosts";
+import { getSortedPostsUnprotected } from "@/utils/getSortedPostsUnprotected";
+import { getSortedSecrets } from "@/utils/getSortedSecrets";
 import { useTranslations } from "@/i18n";
 import config from "@/config";
 
@@ -19,9 +21,11 @@ const locale = Astro.currentLocale ?? config.site.lang;
 const t = useTranslations(locale);
 
 const posts = await getCollection("posts");
-const sortedPosts = getSortedPosts(posts);
-const featuredPosts = sortedPosts.filter(({ data }) => data.featured);
-const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
+// const sortedPosts = getSortedPosts(posts);
+const sortedPostsUnprotected = getSortedPostsUnprotected(posts);
+const featuredPosts = sortedPostsUnprotected.filter(({ data }) => data.featured);
+const recentPosts = sortedPostsUnprotected.filter(({ data }) => !data.featured);
+const sortedSecrets = getSortedSecrets(posts);
 const homePath = getRelativeLocaleUrl(locale, "");
 ---
 
@@ -53,7 +57,7 @@ const homePath = getRelativeLocaleUrl(locale, "");
       </a>
 
       <p>
-      This is where my thoughts are recorded and published. It’s a space for self-motivation, reflection, and fun, covering both technical and personal themes.
+      <span id ="secret-trigger">This</span> is where my thoughts are recorded and published. It’s a space for self-motivation, reflection, and fun, covering both technical and personal themes.
      </p>
 <!--      <p class="mt-2">
         Read the blog posts or check{" "}
@@ -114,6 +118,22 @@ const homePath = getRelativeLocaleUrl(locale, "");
       )
     }
 
+
+    {
+      sortedSecrets.length > 0 && (
+        <section id="sorted-secrets" class="pt-12 pb-6">
+          <h2 class="text-2xl font-semibold tracking-wide">
+            {t.home.hiddenPosts}
+          </h2>
+          <ul>
+            {sortedSecrets.slice(0, 50).map(data => (
+              <Card variant="h3" {...data} />
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
     <div class="my-8 text-center">
       <LinkButton href={getRelativeLocaleUrl(locale, "posts")}>
         {t.home.allPosts}
@@ -125,6 +145,34 @@ const homePath = getRelativeLocaleUrl(locale, "");
 </Layout>
 
 <script>
+  function addSecretTrigger() {
+    const trigger = document.getElementById('secret-trigger');
+    if (trigger && trigger.dataset.initialized === 'true') {
+      return;
+    }
+    if (trigger) {
+      trigger.addEventListener('click', () => {
+        const showSecret = sessionStorage.getItem('show_secret') === 'true';
+        if (showSecret) {
+          sessionStorage.setItem('show_secret', 'false');
+          // alert('Secret mode disabled for this session');
+        } else {
+          sessionStorage.setItem('show_secret', 'true');
+          // alert('Secret mode enabled for this session');
+        }
+        location.reload();
+      });
+      trigger.dataset.initialized = 'true';
+    }
+
+    const secrets = document.getElementById('sorted-secrets');
+    const showSecret = sessionStorage.getItem('show_secret') === 'true';
+    if (secrets) {
+      secrets.style.display = showSecret ? '' : 'none';
+    }
+
+  }
+
   document.addEventListener("astro:page-load", () => {
     const indexLayout = (document.querySelector("#main-content") as HTMLElement)
       ?.dataset;
@@ -132,5 +180,9 @@ const homePath = getRelativeLocaleUrl(locale, "");
     if (indexLayout?.layout) {
       sessionStorage.setItem("backUrl", indexLayout.homePath ?? baseRoot);
     }
+
+    addSecretTrigger();
   });
+
+
 </script>

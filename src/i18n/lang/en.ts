@@ -31,6 +31,7 @@ export default {
     socialLinks: "Social Links",
     featured: "Featured",
     recentPosts: "Recent Posts",
+    hiddenPosts: "Hidden Posts :3",
     allPosts: "All Posts",
   },
   footer: {

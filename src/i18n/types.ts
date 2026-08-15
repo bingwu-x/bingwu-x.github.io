@@ -29,6 +29,7 @@ export interface UIStrings {
     socialLinks: string;
     featured: string;
     recentPosts: string;
+    hiddenPosts: string;
     allPosts: string;
   };
   footer: {
